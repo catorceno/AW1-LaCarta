@@ -55,7 +55,7 @@ def logout():
     """
     session.clear() # borrar cookie de la sesión
     params = urlencode({
-        "returnTo": url_for("carta.listar_restaurantes", _external=True),
+        "returnTo": url_for("carta.inicio", _external=True),
         "client_id": current_app.config["AUTH0_CLIENT_ID"],
     })
 
