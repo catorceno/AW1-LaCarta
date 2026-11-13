@@ -631,3 +631,17 @@ li.fila:hover {
     max-width: none;
   }
 }
+
+/* Bloque de usuario: a la derecha de la barra superior */
+.usuario {
+  margin-left: auto;   /* ocupa todo el espacio libre a su izquierda y se pega al borde derecho */
+  display: flex;
+  align-items: center;
+  gap: 12px;           /* separación entre el nombre y el botón */
+  font-size: 14px;
+  color: var(--texto-suave);
+}
+
+.usuario form {
+  margin: 0;
+}
