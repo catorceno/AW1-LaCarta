@@ -1,0 +1,76 @@
+# Variables que comparten migrate y django (un "ancla" de YAML para no repetirlas)
+x-django-env: &django-env
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Set DJANGO_SECRET_KEY in .env}
+  DJANGO_DEBUG: ${DJANGO_DEBUG:-0}
+  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+  POSTGRES_DB: ${POSTGRES_DB}
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  POSTGRES_HOST: db
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # volumen con nombre: sobrevive a down/up (R4.7)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Django es el dueño del esquema: este servicio migra y termina (R4.3)
+  migrate:
+    build: ./admin
+    command: sh -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput"
+    environment: *django-env
+    volumes:
+      - django_static:/opt/admin/staticfiles
+    depends_on:
+      db:
+        condition: service_healthy
+
+  django:
+    build: ./admin
+    restart: unless-stopped
+    environment: *django-env
+    volumes:
+      - django_static:/opt/admin/staticfiles
+    ports:
+      - "127.0.0.1:8000:8000"   # solo desde esta máquina
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  flask:
+    build:
+      context: ./flask
+      args:
+        REQUIREMENTS: requirements.dev.txt
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: ${FLASK_SECRET_KEY:?Set FLASK_SECRET_KEY in .env}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_USER}
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN:?Set AUTH0_DOMAIN in .env}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE:?Set AUTH0_AUDIENCE in .env}
+      AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID:?Set AUTH0_CLIENT_ID in .env}
+      AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET:?Set AUTH0_CLIENT_SECRET in .env}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-0}
+    ports:
+      - "127.0.0.1:${WEB_PORT:-5001}:5000"
+    volumes:
+      - ./flask:/app
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
+  django_static:

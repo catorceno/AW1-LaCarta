@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}Inicio{% endblock %} · La Carta</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  {# request.endpoint -> nombre de la función de la ruta actual; sirve para marcar el ítem activo del menú #}
+  {% set seccion = request.endpoint or '' %}
+
+  <div class="app">
+    <aside class="barra-lateral">
+      <a class="espacio" href="{{ url_for('carta.listar_restaurantes') }}">
+        <span class="espacio-icono" aria-hidden="true">L</span>
+        <span class="espacio-nombre">La Carta</span>
+      </a>
+
+      <nav class="nav" aria-label="Navegación principal">
+        <a class="nav-item {{ 'activo' if seccion in ['carta.listar_restaurantes', 'carta.detalle_restaurante', 'carta.editar_restaurante'] }}"
+           href="{{ url_for('carta.listar_restaurantes') }}">
+          <span class="nav-icono" aria-hidden="true">☰</span>
+          <span>Restaurantes</span>
+        </a>
+        <a class="nav-item {{ 'activo' if seccion == 'carta.formulario_crear_restaurante' }}"
+           href="{{ url_for('carta.formulario_crear_restaurante') }}">
+          <span class="nav-icono" aria-hidden="true">＋</span>
+          <span>Nuevo restaurante</span>
+        </a>
+      </nav>
+    </aside>
+
+    <div class="principal">
+      <header class="barra-superior">
+        <nav class="migas" aria-label="Ruta actual">
+          <a href="{{ url_for('carta.listar_restaurantes') }}">Restaurantes</a>
+          {% block migas %}{% endblock %}
+        </nav>
+
+        <div class="usuario">
+          {% if current_user %}
+            <span>{{ current_user.name }}</span>
+            <form method="post" action="{{ url_for('auth.logout') }}">
+              <button type="submit" class="boton boton-fantasma">Cerrar sesión</button>
+            </form>
+          {% else %}
+            <a class="boton" href="{{ url_for('auth.login') }}">Ingresar</a>
+          {% endif %}
+        </div>
+      </header>
+
+      <main class="pagina">
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+          {% if mensajes %}
+            <div class="avisos">
+              {% for categoria, texto in mensajes %}
+                <div class="aviso {{ categoria }}" role="status">{{ texto }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% block contenido %}{% endblock %}
+      </main>
+    </div>
+  </div>
+</body>
+</html>
