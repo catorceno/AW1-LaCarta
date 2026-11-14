@@ -121,6 +121,10 @@ def crear_plato(payload, restaurante_id):
         
     return redirect(url_for('carta.detalle_restaurante', restaurante_id=restaurante_id))
 
+@bp.app_errorhandler(400)
+def solicitud_invalida(error):
+    return render_template('errores/400.html', mensaje=error.description), 400
+
 @bp.app_errorhandler(404)
 def no_encontrado(error):
     return render_template('errores/404.html'), 404

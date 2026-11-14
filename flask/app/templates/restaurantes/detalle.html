@@ -64,4 +64,36 @@
     </form>
     {% endif %}
   </section>
+
+  
+  {# Hacer un pedido: solo con create:pedidos. El formulario envía solo cantidades;
+    el precio y el total los calcula el servidor. #}
+  {% if current_user and 'create:pedidos' in current_user.permissions %}
+  {% set disponibles = platos|selectattr('disponible')|list %}
+  <section class="seccion">
+    <h2>Hacer un pedido</h2>
+
+    {% if disponibles %}
+    <form class="formulario-pedido" method="post" action="{{ url_for('pedidos.crear_pedido', restaurante_id=restaurante.id) }}">
+      <ul class="lista">
+        {% for p in disponibles %}
+          <li class="fila">
+            <label class="fila-titulo" for="cantidad-{{ p.id }}">{{ p.nombre }}</label>
+            <span class="fila-meta">{{ "%.2f"|format(p.precio) }} Bs.</span>
+            <input class="cantidad" id="cantidad-{{ p.id }}" name="cantidad-{{ p.id }}"
+                   type="number" min="0" max="20" step="1" value="0" aria-label="Cantidad de {{ p.nombre }}">
+          </li>
+        {% endfor %}
+      </ul>
+      <div class="acciones">
+        <button class="boton boton-primario" type="submit">Hacer pedido</button>
+      </div>
+    </form>
+    {% else %}
+    <ul class="lista">
+      <li class="vacio">No hay platos disponibles en este momento.</li>
+    </ul>
+    {% endif %}
+  </section>
+  {% endif %}
 {% endblock %}

@@ -31,6 +31,23 @@
           <span>Nuevo restaurante</span>
         </a>
         {% endif %}
+
+        
+        {% if current_user and 'read:mis-pedidos' in current_user.permissions %}
+        <a class="nav-item {{ 'activo' if seccion.startswith('pedidos.') and seccion != 'pedidos.cocina' }}"
+           href="{{ url_for('pedidos.mis_pedidos') }}">
+          <span class="nav-icono" aria-hidden="true">🧾</span>
+          <span>Mis pedidos</span>
+        </a>
+        {% endif %}
+
+        {% if current_user and 'read:pedidos' in current_user.permissions %}
+        <a class="nav-item {{ 'activo' if seccion == 'pedidos.cocina' }}"
+           href="{{ url_for('pedidos.cocina') }}">
+          <span class="nav-icono" aria-hidden="true">🍳</span>
+          <span>Cocina</span>
+        </a>
+        {% endif %}
       </nav>
     </aside>
 

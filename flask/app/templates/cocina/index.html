@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+
+{% block titulo %}Cocina{% endblock %}
+
+{% block migas %}
+  <span class="migas-sep">/</span>
+  <span class="migas-actual">Cocina</span>
+{% endblock %}
+
+{% block contenido %}
+  <header class="pagina-cabecera">
+    <div>
+      <h1>Cocina</h1>
+      <p class="texto-tenue">{{ pedidos|length }} {{ 'pedido activo' if pedidos|length == 1 else 'pedidos activos' }} · recarga la página para ver los nuevos</p>
+    </div>
+  </header>
+
+  <ul class="lista">
+    {% for p in pedidos %}
+      <li class="fila fila-pedido">
+        <div>
+          <span class="fila-titulo">#{{ p.id }} · {{ p.restaurante.nombre }}</span>
+          <p class="texto-tenue">
+            {% for item in p.items %}{{ item.cantidad }} × {{ item.plato.nombre }}{% if not loop.last %}, {% endif %}{% endfor %}
+          </p>
+        </div>
+        <span class="estado estado-{{ p.estado }}">{{ p.estado_etiqueta }}</span>
+
+        {# Solo quien tiene update:pedidos ve el botón; la ruta lo exige igual #}
+        {% if 'update:pedidos' in current_user.permissions %}
+        <form method="post" action="{{ url_for('pedidos.cambiar_estado', pedido_id=p.id) }}">
+          <input type="hidden" name="estado" value="{{ siguiente[p.estado] }}">
+          <button class="boton boton-primario" type="submit">Pasar a {{ etiquetas[siguiente[p.estado]] }}</button>
+        </form>
+        {% endif %}
+      </li>
+    {% else %}
+      <li class="vacio">No hay pedidos activos.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

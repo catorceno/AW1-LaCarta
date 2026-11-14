@@ -22,8 +22,9 @@ def create_app(config_class=Config):
     from .auth.oauth import init_auth0
     from .auth.routes import bp as auth_bp
     from .auth.tokens import jwks_client
-    from .routes import bp as carta_bp
     from .commands import seed
+    from .routes import bp as carta_bp
+    from .pedidos import bp as pedidos_bp
     
     init_auth0(app)
     
@@ -31,6 +32,8 @@ def create_app(config_class=Config):
     app.extensions["auth0_jwks"] = jwks_client(app.config["AUTH0_DOMAIN"])
     app.register_blueprint(carta_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(pedidos_bp)
+
     app.register_error_handler(AuthError, handle_auth_error)
 
     app.cli.add_command(seed)
