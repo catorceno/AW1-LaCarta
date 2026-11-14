@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+
+{% block titulo %}{{ empleado.nombre }} {{ empleado.apellido }}{% endblock %}
+
+{% block migas %}
+  <span class="migas-sep">/</span>
+  <a href="{{ url_for('empleados.listar_empleados') }}">Empleados</a>
+  <span class="migas-sep">/</span>
+  <span class="migas-actual">{{ empleado.nombre }} {{ empleado.apellido }}</span>
+{% endblock %}
+
+{% block contenido %}
+  {% set puede_editar = current_user and 'write:empleados' in current_user.permissions %}
+  {% set puede_borrar = current_user and 'delete:empleados' in current_user.permissions %}
+
+  <header class="pagina-cabecera">
+    <h1>{{ empleado.nombre }} {{ empleado.apellido }}</h1>
+    <div class="acciones">
+      {% if puede_editar %}
+        <a class="boton" href="{{ url_for('empleados.editar_empleado', empleado_id=empleado.id) }}">Editar</a>
+      {% endif %}
+      {% if puede_borrar %}
+        <form method="post" action="{{ url_for('empleados.eliminar_empleado', empleado_id=empleado.id) }}">
+          <button class="boton boton-peligro" type="submit" onclick="return confirm('¿Eliminar a este empleado?')">Eliminar</button>
+        </form>
+      {% endif %}
+    </div>
+  </header>
+
+  <dl class="propiedades">
+    <div>
+      <dt>Restaurante</dt>
+      <dd><a href="{{ url_for('carta.detalle_restaurante', restaurante_id=empleado.restaurante_id) }}">{{ empleado.restaurante.nombre }}</a></dd>
+    </div>
+    <div>
+      <dt>Estado</dt>
+      <dd><span class="estado {{ 'estado-si' if empleado.activo else 'estado-no' }}">{{ 'Activo' if empleado.activo else 'Inactivo' }}</span></dd>
+    </div>
+
+    {# Datos privados: solo para quien puede administrar empleados #}
+    {% if puede_editar %}
+    <div>
+      <dt>C.I.</dt>
+      <dd>{{ empleado.ci }}</dd>
+    </div>
+    <div>
+      <dt>Salario</dt>
+      <dd>{{ "%.2f"|format(empleado.salario) }} Bs.</dd>
+    </div>
+    <div>
+      <dt>Fecha de ingreso</dt>
+      <dd>{{ empleado.fecha_ingreso.strftime('%d/%m/%Y') }}</dd>
+    </div>
+    <div>
+      <dt>Correo</dt>
+      <dd class="{{ '' if empleado.correo else 'texto-tenue' }}">{{ empleado.correo or 'No registrado' }}</dd>
+    </div>
+    <div>
+      <dt>Teléfono</dt>
+      <dd class="{{ '' if empleado.telefono else 'texto-tenue' }}">{{ empleado.telefono or 'No registrado' }}</dd>
+    </div>
+    <div>
+      <dt>Dirección</dt>
+      <dd class="{{ '' if empleado.direccion else 'texto-tenue' }}">{{ empleado.direccion or 'No registrada' }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+{% endblock %}

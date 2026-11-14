@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block titulo %}Empleados{% endblock %}
+
+{% block migas %}
+  <span class="migas-sep">/</span>
+  <span class="migas-actual">Empleados</span>
+{% endblock %}
+
+{% block contenido %}
+  <header class="pagina-cabecera">
+    <div>
+      <h1>Empleados</h1>
+      <p class="texto-tenue">{{ empleados|length }} {{ 'empleado' if empleados|length == 1 else 'empleados' }}</p>
+    </div>
+    {% if current_user and 'write:empleados' in current_user.permissions %}
+      <a class="boton boton-primario" href="{{ url_for('empleados.formulario_crear_empleado') }}">+ Nuevo empleado</a>
+    {% endif %}
+  </header>
+
+  {# Solo datos públicos: nombre, restaurante y si está activo #}
+  <ul class="lista">
+    {% for e in empleados %}
+      <li>
+        <a class="fila" href="{{ url_for('empleados.detalle_empleado', empleado_id=e.id) }}">
+          <span class="fila-titulo">{{ e.apellido }}, {{ e.nombre }}</span>
+          <span class="etiqueta">{{ e.restaurante.nombre }}</span>
+          <span class="estado {{ 'estado-si' if e.activo else 'estado-no' }}">{{ 'Activo' if e.activo else 'Inactivo' }}</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="vacio">Todavía no hay empleados.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

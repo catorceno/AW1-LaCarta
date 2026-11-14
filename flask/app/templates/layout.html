@@ -23,6 +23,12 @@
           <span class="nav-icono" aria-hidden="true">☰</span>
           <span>Restaurantes</span>
         </a>
+
+        <a class="nav-item {{ 'activo' if seccion.startswith('empleados.') }}"
+           href="{{ url_for('empleados.listar_empleados') }}">
+          <span class="nav-icono" aria-hidden="true">👥</span>
+          <span>Empleados</span>
+        </a>
         
         {% if current_user and 'write:carta' in current_user.permissions %}
         <a class="nav-item {{ 'activo' if seccion == 'carta.formulario_crear_restaurante' }}"

@@ -121,3 +121,32 @@ class ItemPedido(db.Model):
 
     def __repr__(self):
         return f'<ItemPedido {self.cantidad} x plato={self.plato_id}>'
+
+class Empleado(db.Model):
+    """Tabla creada por Django (lacarta_empleado). Flask solo la usa."""
+    __tablename__ = 'lacarta_empleado'
+    __table_args__ = (
+        db.CheckConstraint('salario >= 0', name='empleado_salario_no_negativo'),
+    )
+
+    id = db.Column(BigId, primary_key=True)
+    nombre = db.Column(db.String(120), nullable=False)
+    apellido = db.Column(db.String(120), nullable=False)
+    ci = db.Column(db.String(12), nullable=False, unique=True)
+    correo = db.Column(db.String(254))
+    telefono = db.Column(db.String(30))
+    direccion = db.Column(db.String(200))
+    salario = db.Column(db.Numeric(10, 2), nullable=False)
+    # Sin default de Python: si Flask no la envía, Postgres pone la fecha de hoy (db_default de Django)
+    fecha_ingreso = db.Column(db.Date, nullable=False, server_default=db.func.current_date())
+    activo = db.Column(db.Boolean, nullable=False, default=True, server_default=db.true())
+    restaurante_id = db.Column(
+        db.BigInteger,
+        db.ForeignKey('lacarta_restaurante.id'),
+        nullable=False
+    )
+
+    restaurante = db.relationship('Restaurante')
+
+    def __repr__(self):
+        return f'<Empleado id={self.id} {self.nombre} {self.apellido}>'

@@ -25,6 +25,7 @@ def create_app(config_class=Config):
     from .commands import seed
     from .routes import bp as carta_bp
     from .pedidos import bp as pedidos_bp
+    from .empleados import bp as empleados_bp
     
     init_auth0(app)
     
@@ -33,6 +34,7 @@ def create_app(config_class=Config):
     app.register_blueprint(carta_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(pedidos_bp)
+    app.register_blueprint(empleados_bp)
 
     app.register_error_handler(AuthError, handle_auth_error)
 
