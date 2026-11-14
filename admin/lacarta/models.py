@@ -1,3 +1,15 @@
+# 1.
+# nueva tabla empleados -> CRUD
+# la nueva tabla debe reflejarse tanto en django como en flask, cualquier modificación se debe poder realizar después de un login
+
+# 2.
+# se debe loguear para editar esa tabla (tanto en django como flask)
+# si no logueado -> solo get, también para los roles de cliente y cocina
+# solo el rol admin de auth0 debe poder manipular esta tabla (hacer el CRUD completo)
+
+# 3.
+# login de django y flask debe ser el mismo, el login debe ser desde Auth0
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.db.models.functions import Now
@@ -36,7 +48,7 @@ class Estado(models.TextChoices):
 class Pedido(models.Model):
 
     cliente = models.CharField(_('cliente'), max_length=255)
-    restaurante = models.ForeignKey(Restaurante, on_delete=models.PROTECT)
+    restaurante = models.ForeignKey(Restaurante, on_delete=models.PROTECT, related_name='pedidos')
     estado = models.CharField(_('estado'), max_length=20, choices=Estado.choices, default=Estado.PENDIENTE, db_default=Estado.PENDIENTE)
     fecha = models.DateTimeField(_('fecha'), db_default=Now())
     total = models.DecimalField(_('total'), max_digits=10, decimal_places=2, default=0, db_default=0)
@@ -57,10 +69,31 @@ class ItemPedido(models.Model):
     precio_unitario = models.DecimalField(_('precio unitario'), max_digits=10, decimal_places=2)
 
     def __str__(self):
-            return f'Item Pedido {self.cantidad} x {self.plato}'
+        return f'Item Pedido {self.cantidad} x {self.plato}'
 
     class Meta:
         constraints = [
             models.CheckConstraint(condition=models.Q(cantidad__gt=0), name='itempedido_cantidad_positivo'),
             models.CheckConstraint(condition=models.Q(precio_unitario__gte=0), name='itempedido_preciounitario_no_negativo')
+        ]
+
+class Empleado(models.Model):
+    restaurante = models.ForeignKey(Restaurante, on_delete=models.PROTECT, related_name='empleados')
+    nombre = models.CharField(_('nombre'), max_length=120)
+    apellido = models.CharField(_('apellido'), max_length=120)
+    ci = models.CharField(_('C.I.'), max_length=12, unique=True)
+    correo = models.EmailField(_('correo'), blank=True, null=True)
+    telefono = models.CharField(_('teléfono'), max_length=30, blank=True, null=True)
+    direccion = models.CharField(_('dirección'), max_length=200, blank=True, null=True)
+    salario = models.DecimalField(_('salario'), max_digits=10, decimal_places=2)
+    fecha_ingreso = models.DateField(_('fecha ingreso'), db_default=Now())
+    activo = models.BooleanField(_('activo'), default=True, db_default=True) # para cuando lo despiden
+
+    def __str__(self):
+        return f'{self.nombre} {self.apellido}'
+
+    class Meta:
+        ordering = ['apellido', 'nombre']
+        constraints = [
+            models.CheckConstraint(condition=models.Q(salario__gte=0), name='empleado_salario_no_negativo')
         ]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Restaurante, Plato, Pedido, ItemPedido
+from .models import Restaurante, Plato, Pedido, ItemPedido, Empleado
 
 # Register your models here.
 class PlatoInline(admin.TabularInline):
@@ -43,3 +43,9 @@ class PedidoAdmin(admin.ModelAdmin):
         pedido = form.instance
         pedido.total = sum(i.cantidad * i.precio_unitario for i in pedido.items.all())
         pedido.save(update_fields=['total'])
+
+@admin.register(Empleado)
+class EmpleadoAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'apellido', 'ci', 'restaurante', 'activo')
+    list_filter = ('restaurante', 'activo')
+    search_fields = ('nombre', 'apellido', 'ci')
