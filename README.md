@@ -115,3 +115,28 @@ docker compose up -d --build
 ```
 
 `migrate` vuelve a correr y aplica las migraciones nuevas antes de que arranquen `django` y `flask`.
+
+
+## Qué quedó incompleto o qué haría distinto
+
+### Problemas conocidos sin resolver
+
+- **Errores 500 abruptos.** Algunas veces, al interactuar con la aplicación o al recargar una página, aparece un *Internal Server Error* genérico que corta el uso. Se vio sobre todo en `/auth/callback`, al volver de Auth0. No llegué a identificar la causa con certeza: una hipótesis es que se recargue o se vuelva atrás a la URL del callback, cuyo `code` es de un solo uso. Lo que haría es que cualquier fallo del callback termine en la página de error propia con un mensaje claro, en vez de la genérica.
+- **Login automático con la sesión anterior.** A veces, al pulsar *Ingresar*, la aplicación entra directamente con la cuenta del último usuario (por ejemplo, el cliente) sin mostrar el formulario de Auth0. Auth0 mantiene su propia sesión en el navegador, aparte de la cookie de Flask: si esa sesión sigue abierta (por cerrar la pestaña sin pulsar *Cerrar sesión*, o porque el logout no llegó a `/v2/logout`), Auth0 reutiliza la sesión sin pedir credenciales. Una mejora sería ofrecer un botón "Ingresar con otra cuenta" que envíe `prompt=login` a Auth0 para forzar el formulario.
+
+### Interfaz
+
+- Faltan ajustes visuales: la posición de algunos botones, los íconos de la barra lateral (son emojis) y algunos textos que siguen en inglés (por ejemplo, la página de acceso denegado).
+- Cuando un pedido es inválido (cantidad fuera de rango, plato no disponible), se muestra una página de error 400 con el motivo. Sería mejor volver a mostrar el formulario con el error junto al plato correspondiente, sin perder las cantidades ya escritas.
+- Al intentar borrar un restaurante que tiene pedidos, la base lo impide (`PROTECT`) y el usuario solo ve "No se pudo eliminar.", sin la razón.
+- Las fechas de los pedidos se muestran en UTC, no en la hora de Bolivia.
+- La cola de la cocina no se actualiza sola: hay que recargar la página (las notificaciones en tiempo real estaban fuera de alcance).
+
+### Puntos de mejora o pendientes
+
+- **Avance de estado concurrente.** `cambiar_estado` lee el estado del pedido y luego lo escribe. Si dos personas de cocina pulsan "Avanzar" sobre el mismo pedido a la vez, las dos leen el mismo estado y escriben el mismo siguiente; no se salta un paso, pero tampoco se detecta el choque. Lo haría con una actualización condicional (`UPDATE … WHERE id = … AND estado = 'pendiente'`) y comprobando cuántas filas cambió.
+- **Un solo `docker-compose.yml` para desarrollo y producción.** En el servidor, el contenedor de Flask también monta el código con un volumen e instala las dependencias de desarrollo (pytest). Funciona, pero lo correcto sería que en producción el código viva solo dentro de la imagen y sin herramientas de desarrollo.
+- **Protección CSRF parcial.** Los formularios dependen de la cookie de sesión con `SameSite=Lax`, que bloquea los POST desde otros sitios, pero no hay tokens CSRF por formulario (por ejemplo, con Flask-WTF).
+- **El cliente se guarda solo con su `sub`** (`auth0|…`). En el admin de Django no se ve quién es la persona; guardaría también su correo al crear el pedido para que el personal pueda buscarlo.
+- **El admin de Django no valida las reglas de negocio** (por ejemplo, permite un ítem de otro restaurante). El enunciado lo permite porque es una herramienta interna, pero sería fácil repetir ahí la validación.
+- **Sin respaldos de la base.** Los datos sobreviven a `docker compose down` gracias al volumen, pero no hay copias con `pg_dump`.
