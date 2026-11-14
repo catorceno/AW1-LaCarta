@@ -49,6 +49,15 @@ CSRF_TRUSTED_ORIGINS = [
 # Nginx termina el HTTPS y avisa con X-Forwarded-Proto: es el equivalente a ProxyFix en Flask
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# Auth0: el mismo tenant y la misma API que Flask, con su propia aplicación (La Carta Admin)
+AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN', '')
+AUTH0_AUDIENCE = os.environ.get('AUTH0_AUDIENCE', '')
+AUTH0_CLIENT_ID = os.environ.get('DJANGO_AUTH0_CLIENT_ID', '')
+AUTH0_CLIENT_SECRET = os.environ.get('DJANGO_AUTH0_CLIENT_SECRET', '')
+
+# En producción (HTTPS), las cookies de sesión y CSRF solo viajan cifradas
+SESSION_COOKIE_SECURE = os.environ.get('DJANGO_SECURE_COOKIES', '0') == '1'
+CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
 
 # Application definition
 

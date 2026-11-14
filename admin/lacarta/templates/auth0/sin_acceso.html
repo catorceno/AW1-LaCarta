@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}Sin acceso | {{ site_title|default:"Administración de Django" }}{% endblock %}
+
+{% block content %}
+  <h1>No puedes entrar al admin</h1>
+  <p>{{ mensaje }}</p>
+  <p>Inicia sesión con una cuenta que tenga el rol <strong>admin</strong> en Auth0.</p>
+
+  {# Cierra también la sesión de Auth0, para poder entrar con otra cuenta #}
+  <form method="post" action="{% url 'auth0_logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="button">Ingresar con otra cuenta</button>
+  </form>
+{% endblock %}

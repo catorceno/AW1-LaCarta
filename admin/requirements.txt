@@ -3,3 +3,6 @@ psycopg[binary]
 python-dotenv
 django-split-settings
 gunicorn
+Authlib==1.6.12
+requests==2.32.5
+PyJWT[crypto]==2.15.1
