@@ -40,6 +40,7 @@ flowchart TB
     nginx -- "admin./static/ desde disco" --> static
     nav -. "login (redirecciones)" .-> auth0
     flask -. "canje del código y claves públicas (JWKS)" .-> auth0
+    django -. "login del admin: canje del código y JWKS" .-> auth0
     migrate -- "crea las tablas" --> db
     migrate -- "collectstatic" --> static
     flask -- "lee y escribe" --> db
@@ -60,7 +61,16 @@ Orden de arranque: `db` (con healthcheck) → `migrate` → `django` y `flask`.
 
 ### Requisitos previos
 
-- **Auth0**: un tenant con la API `La Carta API` (Identifier `lacarta-api`, RS256, *Enable RBAC* y *Add Permissions in the Access Token*), los seis permisos (`create:pedidos`, `read:mis-pedidos`, `read:pedidos`, `update:pedidos`, `write:carta`, `delete:carta`), los roles `cliente`, `cocina` y `admin`, y la Regular Web Application `La Carta Web` autorizada en *API Access*.
+- **Auth0**: un tenant con la API `La Carta API` (Identifier `lacarta-api`, RS256, *Enable RBAC* y *Add Permissions in the Access Token*) y estos permisos y roles:
+
+  | Permiso | cliente | cocina | admin |
+  |---|:-:|:-:|:-:|
+  | `create:pedidos`, `read:mis-pedidos` | ✓ | | |
+  | `read:pedidos`, `update:pedidos` | | ✓ | |
+  | `write:carta`, `delete:carta` | | | ✓ |
+  | `write:empleados`, `delete:empleados` | | | ✓ |
+
+  Y dos Regular Web Applications autorizadas en *API Access*: `La Carta Web` (Flask) y `La Carta Admin` (Django). Al admin de Django solo entra quien tenga `write:empleados`; no se usa `createsuperuser`.
 - **Para producción**: una instancia EC2 con Ubuntu, un Security Group que solo abra los puertos **22, 80 y 443**, y un dominio que apunte a su IP pública (aquí, `lacarta-camila.duckdns.org`; los subdominios `carta.` y `admin.` resuelven a la misma IP).
 
 ### En local (desarrollo)
@@ -74,14 +84,15 @@ cp .env.example .env          # y completar los valores (ver la tabla de abajo)
 docker compose up -d --build
 docker compose ps             # migrate: Exited (0); db, django y flask: Up
 docker compose exec flask flask seed                              # datos de prueba (opcional)
-docker compose exec django python manage.py createsuperuser       # usuario del admin
 ```
 
 - Carta (Flask): <http://localhost:5001> — tiene que ser `localhost`, no `127.0.0.1`, por las URLs registradas en Auth0.
 - Admin (Django): <http://localhost:8000/admin/> — sin estilos en local: los estáticos los sirve Nginx en producción.
 - Pruebas: `docker compose exec flask pytest -q`
 
-En Auth0 (*La Carta Web → Settings*): Allowed Callback URLs `http://localhost:5001/auth/callback` y Allowed Logout URLs `http://localhost:5001/`.
+En Auth0:
+- *La Carta Web*: Allowed Callback URLs `http://localhost:5001/auth/callback` y Allowed Logout URLs `http://localhost:5001/`.
+- *La Carta Admin*: Allowed Callback URLs `http://localhost:8000/auth/callback/` y Allowed Logout URLs `http://localhost:8000/admin/`.
 
 ### En producción (EC2 con Ubuntu)
 
@@ -115,6 +126,8 @@ Claves nuevas para el servidor: `python3 -c "import secrets; print(secrets.token
 | `BEHIND_PROXY` | `1` (Flask confía en los `X-Forwarded-*` de Nginx: ProxyFix) |
 | `SESSION_COOKIE_SECURE` | `1` (la cookie de sesión solo viaja por HTTPS) |
 | `AUTH0_DOMAIN`, `AUTH0_AUDIENCE`, `AUTH0_CLIENT_ID`, `AUTH0_CLIENT_SECRET` | Los de *La Carta Web* y *La Carta API* en Auth0 |
+| `DJANGO_AUTH0_CLIENT_ID`, `DJANGO_AUTH0_CLIENT_SECRET` | Los de *La Carta Admin* en Auth0 |
+| `DJANGO_SECURE_COOKIES` | `1` (las cookies de sesión y CSRF del admin solo viajan por HTTPS) |
 
 **3. Levantar los contenedores**
 
@@ -122,7 +135,6 @@ Claves nuevas para el servidor: `python3 -c "import secrets; print(secrets.token
 docker compose up -d --build
 docker compose ps                            # migrate: Exited (0); db, django y flask: Up
 docker compose logs migrate | tail           # migraciones aplicadas y collectstatic
-docker compose exec django python manage.py createsuperuser
 docker compose exec flask flask seed         # opcional: datos de prueba
 ```
 
@@ -152,6 +164,11 @@ En *La Carta Web → Settings*, agregar (sin borrar las de localhost):
 
 - Allowed Callback URLs: `https://carta.lacarta-camila.duckdns.org/auth/callback`
 - Allowed Logout URLs: `https://carta.lacarta-camila.duckdns.org/`
+
+En *La Carta Admin → Settings*:
+
+- Allowed Callback URLs: `https://admin.lacarta-camila.duckdns.org/auth/callback/`
+- Allowed Logout URLs: `https://admin.lacarta-camila.duckdns.org/admin/`
 
 **7. Verificar**
 
