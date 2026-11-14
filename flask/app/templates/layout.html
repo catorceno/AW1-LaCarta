@@ -16,18 +16,21 @@
         <span class="espacio-icono" aria-hidden="true">L</span>
         <span class="espacio-nombre">La Carta</span>
       </a>
-
+      
       <nav class="nav" aria-label="Navegación principal">
         <a class="nav-item {{ 'activo' if seccion in ['carta.listar_restaurantes', 'carta.detalle_restaurante', 'carta.editar_restaurante'] }}"
            href="{{ url_for('carta.listar_restaurantes') }}">
           <span class="nav-icono" aria-hidden="true">☰</span>
           <span>Restaurantes</span>
         </a>
+        
+        {% if current_user and 'write:carta' in current_user.permissions %}
         <a class="nav-item {{ 'activo' if seccion == 'carta.formulario_crear_restaurante' }}"
            href="{{ url_for('carta.formulario_crear_restaurante') }}">
           <span class="nav-icono" aria-hidden="true">＋</span>
           <span>Nuevo restaurante</span>
         </a>
+        {% endif %}
       </nav>
     </aside>
 

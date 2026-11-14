@@ -3,6 +3,7 @@ from sqlalchemy import func
 
 from .extensions import db
 from .models import Restaurante, Plato
+from .auth import requires_auth
 
 bp = Blueprint("carta", __name__)
 
@@ -37,11 +38,13 @@ def detalle_restaurante(restaurante_id):
     return render_template('restaurantes/detalle.html', restaurante=restaurante, platos=platos)
 
 @bp.route('/restaurantes/crear', methods=['GET'])
-def formulario_crear_restaurante():
+@requires_auth("write:carta")
+def formulario_crear_restaurante(payload):
     return render_template('restaurantes/formulario.html')
 
 @bp.route('/restaurantes/crear', methods=['POST'])
-def crear_restaurante():
+@requires_auth("write:carta")
+def crear_restaurante(payload):
     try:
         restaurante = Restaurante(
         nombre=request.form.get('nombre', '').strip(),
@@ -60,7 +63,8 @@ def crear_restaurante():
     return redirect(url_for('carta.listar_restaurantes'))
 
 @bp.route('/restaurantes/<int:restaurante_id>/editar', methods=['GET', 'POST'])
-def editar_restaurante(restaurante_id):
+@requires_auth("write:carta")
+def editar_restaurante(payload, restaurante_id):
     restaurante = db.get_or_404(Restaurante, restaurante_id)
 
     if request.method == 'GET':
@@ -81,7 +85,8 @@ def editar_restaurante(restaurante_id):
     return redirect(url_for('carta.detalle_restaurante', restaurante_id=restaurante_id))
 
 @bp.route('/restaurantes/<int:restaurante_id>/eliminar', methods=['POST'])
-def eliminar_restaurante(restaurante_id):
+@requires_auth("delete:carta")
+def eliminar_restaurante(payload, restaurante_id):
     restaurante = db.get_or_404(Restaurante, restaurante_id)
 
     try:
@@ -95,7 +100,8 @@ def eliminar_restaurante(restaurante_id):
     return redirect(url_for('carta.listar_restaurantes'))
 
 @bp.route('/restaurantes/<int:restaurante_id>/platos', methods=['POST'])
-def crear_plato(restaurante_id):
+@requires_auth("write:carta")
+def crear_plato(payload, restaurante_id):
     db.get_or_404(Restaurante, restaurante_id)
 
     try:

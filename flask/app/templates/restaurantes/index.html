@@ -10,7 +10,9 @@
         {{ restaurantes|length }} {{ 'restaurante' if restaurantes|length == 1 else 'restaurantes' }}{% if ciudad %} en "{{ ciudad }}"{% endif %}
       </p>
     </div>
+    {% if current_user and 'write:carta' in current_user.permissions %}
     <a class="boton boton-primario" href="{{ url_for('carta.formulario_crear_restaurante') }}">+ Nuevo restaurante</a>
+    {% endif %}
   </header>
 
   <!-- action: indica a qué URL se envían los datos del form, qué ruta los recibe y los procesa -->
