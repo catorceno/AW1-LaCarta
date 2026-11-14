@@ -39,6 +39,16 @@ ALLOWED_HOSTS = [
     if h.strip()
 ]
 
+# Orígenes desde los que se aceptan formularios POST (el login del admin) por HTTPS
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
+    if o.strip()
+]
+
+# Nginx termina el HTTPS y avisa con X-Forwarded-Proto: es el equivalente a ProxyFix en Flask
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 # Application definition
 
