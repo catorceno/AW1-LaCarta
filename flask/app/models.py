@@ -48,6 +48,7 @@ ETIQUETAS_ESTADO = {
     'cancelado': 'Cancelado',
 }
 ESTADOS = tuple(ETIQUETAS_ESTADO)
+_ESTADOS_SQL = ", ".join(f"'{e}'" for e in ESTADOS)   # 'pendiente', 'en_preparacion', ...
 
 
 class Pedido(db.Model):
@@ -59,7 +60,7 @@ class Pedido(db.Model):
     """
     __tablename__ = 'lacarta_pedido'
     __table_args__ = (
-        db.CheckConstraint(f"estado IN ({ESTADOS})", name='pedido_estado_valido'),
+        db.CheckConstraint(f"estado IN ({_ESTADOS_SQL})", name='pedido_estado_valido'),
         db.CheckConstraint('total >= 0', name='pedido_total_no_negativo'),
     )
 
