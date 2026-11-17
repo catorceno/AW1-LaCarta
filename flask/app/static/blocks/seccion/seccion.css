@@ -1,0 +1,14 @@
+/* seccion: un título h2 con su contenido (Platos, Hacer un pedido) */
+.seccion__titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* Mix: lo que va debajo del contenido (el formulario para agregar un plato, los botones) */
+.seccion__pie {
+  margin-top: 12px;
+}

@@ -1,0 +1,36 @@
+/* La Carta: la única hoja que enlazan las páginas.
+   BEM, regla 2: cada bloque vive en static/blocks/<bloque>/ con su CSS (y su JS si lo tiene).
+   Orden: base, después los bloques simples y al final los que ubican a otros con mixes. */
+
+@import url("base.css");
+
+/* Bloques simples */
+@import url("blocks/boton/boton.css");
+@import url("blocks/entrada/entrada.css");
+@import url("blocks/casilla/casilla.css");
+@import url("blocks/etiqueta/etiqueta.css");
+@import url("blocks/contador/contador.css");
+@import url("blocks/estado/estado.css");
+@import url("blocks/aviso/aviso.css");
+
+/* Bloques que contienen a otros */
+@import url("blocks/acciones/acciones.css");
+@import url("blocks/campo/campo.css");
+@import url("blocks/formulario/formulario.css");
+@import url("blocks/formulario-linea/formulario-linea.css");
+@import url("blocks/filtro/filtro.css");
+@import url("blocks/lista/lista.css");
+@import url("blocks/fila/fila.css");
+@import url("blocks/propiedades/propiedades.css");
+@import url("blocks/avisos/avisos.css");
+@import url("blocks/mensaje-error/mensaje-error.css");
+@import url("blocks/seccion/seccion.css");
+
+/* Armazón de la página */
+@import url("blocks/nav/nav.css");
+@import url("blocks/barra-lateral/barra-lateral.css");
+@import url("blocks/migas/migas.css");
+@import url("blocks/usuario/usuario.css");
+@import url("blocks/barra-superior/barra-superior.css");
+@import url("blocks/pagina/pagina.css");
+@import url("blocks/app/app.css");

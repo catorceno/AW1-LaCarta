@@ -1,0 +1,11 @@
+/* formulario: alta y edición, un campo debajo del otro */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Mix con el bloque acciones: los botones al final, un poco más separados */
+.formulario__acciones {
+  margin-top: 8px;
+}

@@ -1,0 +1,9 @@
+/* usuario: nombre y botón de sesión.
+   Dónde va (a la derecha de la barra superior) lo decide el padre: barra-superior__usuario. */
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--texto-suave);
+}

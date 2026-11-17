@@ -1,0 +1,39 @@
+/* propiedades: la ficha de un detalle (Ciudad, Dirección, Teléfono…) como <dl> */
+.propiedades {
+  margin: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.propiedades__fila {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+  min-height: 34px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.propiedades__fila:hover {
+  background: var(--hover);
+}
+
+.propiedades__nombre {
+  color: var(--texto-tenue);
+  font-size: 14px;
+}
+
+.propiedades__valor {
+  margin: 0;
+}
+
+/* Sin dato: "No registrada" en gris */
+.propiedades__valor--vacio {
+  color: var(--texto-tenue);
+}
+
+@media (max-width: 760px) {
+  .propiedades__fila {
+    grid-template-columns: 110px 1fr;
+  }
+}

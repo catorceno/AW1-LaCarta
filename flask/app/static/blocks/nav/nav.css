@@ -1,0 +1,45 @@
+/* nav: los enlaces de la barra lateral. nav__item--activo marca la sección actual. */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 8px;
+  border-radius: var(--radio);
+  color: var(--texto-suave);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background var(--transicion), color var(--transicion);
+}
+
+.nav__item:hover {
+  background: var(--hover);
+  color: var(--texto);
+}
+
+.nav__item--activo {
+  background: var(--activo);
+  color: var(--texto);
+}
+
+.nav__icono {
+  width: 18px;
+  text-align: center;
+  color: var(--texto-tenue);
+}
+
+@media (max-width: 760px) {
+  .nav {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .nav__item {
+    white-space: nowrap;
+  }
+}

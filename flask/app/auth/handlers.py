@@ -1,15 +1,12 @@
-from flask import render_template, request, session
+from flask import jsonify
+
 from .errors import AuthError
 
+
 def handle_auth_error(err: AuthError):
-    """401 shows the sign-in page; 400 and 403 show the error page.
-    The 401 page has a button instead of redirecting to Auth0 on its own:
-    if the token were rejected by a configuration mistake, an automatic
-    redirect would bounce between Flask and Auth0 forever.
+    """401, 403 and 400 as JSON: {"code": ..., "description": ...}.
+
+    The frontend decides what to show (the "Ingresar" button on a 401, the
+    access-denied message on a 403).
     """
-    if err.status_code == 401:
-        # asigna None a access_token
-        session.pop("access_token", None) # expired or invalid: useless now
-        return render_template("auth/signin.html", next=request.path), 401
-    
-    return render_template("auth/forbidden.html", status=err.status_code, message=err.error["description"]), err.status_code
+    return jsonify(err.error), err.status_code

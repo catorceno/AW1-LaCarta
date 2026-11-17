@@ -6,7 +6,6 @@ from decimal import Decimal
 
 from ..errors import ConflictoError, NoEncontradoError, ReglaDeNegocioError
 from ..models import Empleado
-from .restaurante_service import a_view as restaurante_a_view
 
 CI_MAXIMO = 12
 
@@ -31,7 +30,19 @@ class EmpleadoDetails:
 
 
 @dataclass(frozen=True)
+class EmpleadoPublicoView:
+    """Lo que puede ver cualquiera, sin login."""
+    id: int
+    nombre: str
+    apellido: str
+    activo: bool
+    restaurante_id: int
+    restaurante_nombre: str
+
+
+@dataclass(frozen=True)
 class EmpleadoView:
+    """Con los datos privados: solo para quien administra empleados."""
     id: int
     nombre: str
     apellido: str
@@ -44,6 +55,17 @@ class EmpleadoView:
     activo: bool
     restaurante_id: int
     restaurante_nombre: str
+
+
+def _a_publico(empleado):
+    return EmpleadoPublicoView(
+        id=empleado.id,
+        nombre=empleado.nombre,
+        apellido=empleado.apellido,
+        activo=empleado.activo,
+        restaurante_id=empleado.restaurante_id,
+        restaurante_nombre=empleado.restaurante.nombre,
+    )
 
 
 def _a_view(empleado):
@@ -114,14 +136,14 @@ class EmpleadoService:
         except ConflictoError as err:
             raise ReglaDeNegocioError("Ya existe un empleado con ese C.I.") from err
 
-    def listar(self):
-        return [_a_view(e) for e in self.empleados.listar()]
+    def listar(self, privados=False):
+        """privados=False: solo los datos públicos de cada empleado."""
+        a_view = _a_view if privados else _a_publico
+        return [a_view(e) for e in self.empleados.listar()]
 
-    def obtener(self, empleado_id):
-        return _a_view(self._buscar(empleado_id))
-
-    def restaurantes_para_elegir(self):
-        return [restaurante_a_view(r) for r in self.restaurantes.listar_por_nombre()]
+    def obtener(self, empleado_id, privados=False):
+        a_view = _a_view if privados else _a_publico
+        return a_view(self._buscar(empleado_id))
 
     def crear(self, details):
         self._validar(details)

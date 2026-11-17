@@ -1,0 +1,51 @@
+/* barra-lateral: marca de la app arriba y la navegación (bloque nav) debajo */
+.barra-lateral {
+  padding: 8px;
+  background: var(--fondo-lateral);
+  border-right: 1px solid var(--borde);
+}
+
+.barra-lateral__marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  margin-bottom: 12px;
+  border-radius: var(--radio);
+  font-weight: 600;
+  transition: background var(--transicion);
+}
+
+.barra-lateral__marca:hover {
+  background: var(--hover);
+}
+
+.barra-lateral__marca-icono {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  background: var(--texto);
+  color: var(--fondo);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .barra-lateral {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-right: none;
+    border-bottom: 1px solid var(--borde);
+  }
+
+  .barra-lateral__marca {
+    margin-bottom: 0;
+  }
+
+  .barra-lateral__marca-nombre {
+    display: none;
+  }
+}

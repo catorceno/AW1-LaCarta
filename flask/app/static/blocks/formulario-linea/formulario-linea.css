@@ -1,0 +1,19 @@
+/* formulario-linea: un formulario corto en una sola línea (agregar plato) */
+.formulario-linea {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px dashed var(--borde);
+  border-radius: var(--radio);
+}
+
+/* Ancho de cada control: elementos con nombre propio, no input[name="..."] */
+.formulario-linea__principal {
+  flex: 2 1 180px;
+}
+
+.formulario-linea__secundario {
+  flex: 1 1 110px;
+}

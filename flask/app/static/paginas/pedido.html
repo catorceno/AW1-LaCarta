@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedido · La Carta</title>
+  <link rel="stylesheet" href="/static/main.css">
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.19/auth0-spa-js.production.js"></script>
+  <script type="module" src="/static/paginas/pedido.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="app__lateral barra-lateral">
+      <a class="barra-lateral__marca" href="/restaurantes">
+        <span class="barra-lateral__marca-icono" aria-hidden="true">L</span>
+        <span class="barra-lateral__marca-nombre">La Carta</span>
+      </a>
+      <nav class="nav" aria-label="Navegación principal" data-nav></nav>
+    </aside>
+
+    <div class="app__principal">
+      <header class="barra-superior">
+        <nav class="migas" aria-label="Ruta actual" data-migas></nav>
+        <div class="barra-superior__usuario usuario" data-usuario></div>
+      </header>
+
+      <main class="pagina">
+        <div class="pagina__avisos avisos avisos--vacio" data-avisos></div>
+
+        <div data-contenido>
+          <header class="pagina__cabecera">
+            <h1 class="pagina__titulo" data-campo="titulo">Cargando…</h1>
+            <div class="acciones">
+              <button class="boton boton--peligro" type="button" data-accion="cancelar"
+                      data-confirmar="¿Cancelar este pedido?" hidden>Cancelar pedido</button>
+            </div>
+          </header>
+
+          <dl class="propiedades">
+            <div class="propiedades__fila">
+              <dt class="propiedades__nombre">Restaurante</dt>
+              <dd class="propiedades__valor"><a data-enlace="restaurante" data-campo="restaurante"></a></dd>
+            </div>
+            <div class="propiedades__fila">
+              <dt class="propiedades__nombre">Estado</dt>
+              <dd class="propiedades__valor"><span class="estado" data-campo="estado"></span></dd>
+            </div>
+            <div class="propiedades__fila">
+              <dt class="propiedades__nombre">Fecha</dt>
+              <dd class="propiedades__valor" data-campo="fecha"></dd>
+            </div>
+          </dl>
+
+          <section class="pagina__seccion seccion">
+            <h2 class="seccion__titulo">Platos <span class="contador" data-campo="cantidad-items"></span></h2>
+            <ul class="lista" data-lista="items"></ul>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <template data-plantilla="item">
+    <li class="lista__item fila">
+      <span class="fila__titulo" data-campo="descripcion"></span>
+      <span class="fila__detalle" data-campo="precio-unitario"></span>
+      <span class="fila__meta" data-campo="subtotal"></span>
+    </li>
+  </template>
+
+  <template data-plantilla="total">
+    <li class="lista__item fila">
+      <span class="fila__titulo">Total</span>
+      <span class="fila__meta"><strong data-campo="total"></strong></span>
+    </li>
+  </template>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+/* aviso: un mensaje. --exito en verde, --error en rojo. */
+.aviso {
+  padding: 10px 14px;
+  border-radius: var(--radio);
+  background: var(--superficie);
+  font-size: 14px;
+}
+
+.aviso--exito {
+  background: rgba(77, 171, 154, 0.14);
+  color: #7cd1c0;
+}
+
+.aviso--error {
+  background: rgba(235, 87, 87, 0.14);
+  color: #f19a9a;
+}

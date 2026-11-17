@@ -1,0 +1,58 @@
+/* pagina: el contenido central (<main>). Ubica a sus hijos con margen entre ellos;
+   los bloques hijos no tienen márgenes propios. */
+.pagina {
+  max-width: var(--ancho-pagina);
+  margin: 0 auto;
+  padding: 48px 32px 96px;
+}
+
+.pagina__cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pagina__titulo {
+  margin-bottom: 4px;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.pagina__subtitulo {
+  color: var(--texto-tenue);
+}
+
+/* Mixes: la distancia con los vecinos es responsabilidad del padre */
+.pagina__avisos {
+  margin-bottom: 24px;
+}
+
+.pagina__filtro {
+  margin-bottom: 16px;
+}
+
+.pagina__formulario {
+  margin-top: 24px;
+}
+
+.pagina__seccion {
+  margin-top: 40px;
+}
+
+@media (max-width: 760px) {
+  .pagina {
+    padding: 24px 16px 64px;
+  }
+
+  .pagina__titulo {
+    font-size: 1.75rem;
+  }
+
+  .pagina__cabecera {
+    flex-direction: column;
+  }
+}

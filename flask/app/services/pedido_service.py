@@ -187,6 +187,7 @@ class PedidoService:
             raise ReglaDeNegocioError("Solo se puede cancelar un pedido pendiente.")
         pedido.estado = "cancelado"
         self.pedidos.commit()
+        return _a_view(pedido)
 
     # -------------------------------------------------------------- cocina
 
@@ -194,7 +195,7 @@ class PedidoService:
         return [_a_view(p) for p in self.pedidos.listar_con_estados(ESTADOS_ACTIVOS)]
 
     def avanzar(self, pedido_id, nuevo):
-        """Solo se acepta el siguiente paso de la tabla. Devuelve la etiqueta del nuevo estado."""
+        """Solo se acepta el siguiente paso de la tabla."""
         pedido = self.pedidos.get(pedido_id)
         if pedido is None:
             raise NoEncontradoError(f"No existe el pedido {pedido_id}.")
@@ -202,4 +203,4 @@ class PedidoService:
             raise ReglaDeNegocioError(f"No se puede pasar de {pedido.estado} a {nuevo or '(vacío)'}.")
         pedido.estado = nuevo
         self.pedidos.commit()
-        return _etiqueta(nuevo)
+        return _a_view(pedido)

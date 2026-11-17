@@ -1,0 +1,55 @@
+/* fila: título a la izquierda, etiqueta o estado al centro, dato a la derecha */
+.fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 100px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 6px;
+  transition: background var(--transicion);
+}
+
+.fila:hover {
+  background: var(--hover);
+}
+
+/* Con un botón al final (cocina): la última columna toma el ancho del botón */
+.fila--accion {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.fila__titulo {
+  overflow: hidden;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.fila__detalle {
+  color: var(--texto-tenue);
+}
+
+.fila__meta {
+  color: var(--texto-tenue);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+@media (max-width: 760px) {
+  .fila {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 4px;
+  }
+
+  /* En pantallas chicas la etiqueta o el estado (mix fila__etiqueta) bajan debajo del título */
+  .fila__etiqueta {
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  .fila__meta,
+  .fila__accion {
+    grid-row: 1;
+    grid-column: 2;
+  }
+}

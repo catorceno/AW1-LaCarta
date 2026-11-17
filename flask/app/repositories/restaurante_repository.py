@@ -21,9 +21,6 @@ class RestauranteRepository(Repositorio):
             consulta = consulta.filter(Restaurante.ciudad.ilike(f"%{ciudad}%"))
         return consulta.order_by(Restaurante.nombre).all()
 
-    def listar_por_nombre(self):
-        return self.session.scalars(select(Restaurante).order_by(Restaurante.nombre)).all()
-
     def platos_de(self, restaurante_id):
         return self.session.scalars(
             select(Plato).filter_by(restaurante_id=restaurante_id).order_by(Plato.nombre)

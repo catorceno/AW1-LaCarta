@@ -1,0 +1,32 @@
+/* app: el armazón de cada página (barra lateral + contenido).
+   Ubica a sus hijos; cómo se ve cada uno lo decide su propio bloque. */
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app__lateral {
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  width: var(--ancho-lateral);
+  height: 100vh;
+}
+
+.app__principal {
+  flex: 1;
+  min-width: 0; /* evita que textos largos desborden el flex */
+}
+
+@media (max-width: 760px) {
+  .app {
+    flex-direction: column;
+  }
+
+  /* La barra lateral pasa a ser una barra horizontal arriba */
+  .app__lateral {
+    position: static;
+    width: auto;
+    height: auto;
+  }
+}

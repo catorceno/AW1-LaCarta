@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cocina · La Carta</title>
+  <link rel="stylesheet" href="/static/main.css">
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.19/auth0-spa-js.production.js"></script>
+  <script type="module" src="/static/paginas/cocina.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="app__lateral barra-lateral">
+      <a class="barra-lateral__marca" href="/restaurantes">
+        <span class="barra-lateral__marca-icono" aria-hidden="true">L</span>
+        <span class="barra-lateral__marca-nombre">La Carta</span>
+      </a>
+      <nav class="nav" aria-label="Navegación principal" data-nav></nav>
+    </aside>
+
+    <div class="app__principal">
+      <header class="barra-superior">
+        <nav class="migas" aria-label="Ruta actual" data-migas></nav>
+        <div class="barra-superior__usuario usuario" data-usuario></div>
+      </header>
+
+      <main class="pagina">
+        <div class="pagina__avisos avisos avisos--vacio" data-avisos></div>
+
+        <div data-contenido>
+          <header class="pagina__cabecera">
+            <div>
+              <h1 class="pagina__titulo">Cocina</h1>
+              <p class="pagina__subtitulo" data-campo="resumen">Cargando…</p>
+            </div>
+          </header>
+
+          <ul class="lista" data-lista="cocina"></ul>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <template data-plantilla="pedido-cocina">
+    <li class="lista__item fila fila--accion">
+      <div>
+        <span class="fila__titulo" data-campo="titulo"></span>
+        <p class="fila__detalle" data-campo="items"></p>
+      </div>
+      <span class="fila__etiqueta estado" data-campo="estado"></span>
+      <!-- Solo quien tiene update:pedidos ve el botón; la API lo exige igual -->
+      <button class="fila__accion boton boton--primario" type="button" data-accion="avanzar" hidden></button>
+    </li>
+  </template>
+
+</body>
+</html>

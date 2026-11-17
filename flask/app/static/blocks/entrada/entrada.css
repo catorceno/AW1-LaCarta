@@ -1,0 +1,24 @@
+/* entrada: cualquier campo para escribir o elegir (input, select).
+   Se le pone la clase; ya no se estila por input[type="..."]. */
+.entrada {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: var(--hover);
+  color: var(--texto);
+  font: inherit;
+  font-size: 14px;
+  transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+.entrada::placeholder {
+  color: var(--texto-tenue);
+}
+
+.entrada:focus {
+  outline: none;
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(35, 131, 226, 0.25);
+}

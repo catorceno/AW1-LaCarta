@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurante · La Carta</title>
+  <link rel="stylesheet" href="/static/main.css">
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.19/auth0-spa-js.production.js"></script>
+  <script type="module" src="/static/paginas/restaurante-formulario.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="app__lateral barra-lateral">
+      <a class="barra-lateral__marca" href="/restaurantes">
+        <span class="barra-lateral__marca-icono" aria-hidden="true">L</span>
+        <span class="barra-lateral__marca-nombre">La Carta</span>
+      </a>
+      <nav class="nav" aria-label="Navegación principal" data-nav></nav>
+    </aside>
+
+    <div class="app__principal">
+      <header class="barra-superior">
+        <nav class="migas" aria-label="Ruta actual" data-migas></nav>
+        <div class="barra-superior__usuario usuario" data-usuario></div>
+      </header>
+
+      <main class="pagina">
+        <div class="pagina__avisos avisos avisos--vacio" data-avisos></div>
+
+        <div data-contenido>
+          <h1 class="pagina__titulo" data-campo="titulo">Nuevo restaurante</h1>
+
+          <form class="pagina__formulario formulario" data-formulario="restaurante">
+            <label class="campo">
+              <span class="campo__etiqueta">Nombre</span>
+              <input class="campo__control entrada" name="nombre" type="text" placeholder="Nombre del restaurante" required>
+            </label>
+            <label class="campo">
+              <span class="campo__etiqueta">Ciudad</span>
+              <input class="campo__control entrada" name="ciudad" type="text" placeholder="Ciudad" required>
+            </label>
+            <label class="campo">
+              <span class="campo__etiqueta">Dirección <small class="campo__nota">opcional</small></span>
+              <input class="campo__control entrada" name="direccion" type="text" placeholder="Dirección">
+            </label>
+            <label class="campo">
+              <span class="campo__etiqueta">Teléfono <small class="campo__nota">opcional</small></span>
+              <input class="campo__control entrada" name="telefono" type="text" placeholder="Teléfono">
+            </label>
+
+            <div class="formulario__acciones acciones">
+              <button class="boton boton--primario" type="submit" data-campo="boton">Crear</button>
+              <a class="boton boton--fantasma" href="/restaurantes" data-enlace="cancelar">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,38 +1,38 @@
-"""Presentación de pedidos: lee el formulario, llama al servicio y elige la plantilla.
+"""API de pedidos: lee el JSON, llama al servicio y responde JSON.
 
 Las reglas están en services/pedido_service.py. Los errores del dominio
-(ReglaDeNegocioError -> 400, NoEncontradoError -> 404) los responden los
-manejadores de routes.py.
+(ReglaDeNegocioError -> 400, NoEncontradoError -> 404) los traduce
+respuestas.registrar_errores.
 """
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint
 
 from .auth import requires_auth
-from .errors import NoSeGuardoError
 from .extensions import db
 from .repositories import PedidoRepository, RestauranteRepository
+from .respuestas import cuerpo_json, entero, error_json, json_de, texto
 from .services.pedido_service import LineaPedido, PedidoDetails, PedidoService
 
-bp = Blueprint("pedidos", __name__)
+bp = Blueprint("pedidos", __name__, url_prefix="/api")
 
 
 def servicio():
     return PedidoService(PedidoRepository(db.session), RestauranteRepository(db.session))
 
 
-def leer_lineas(form):
-    """Solo cantidad-<plato_id> = <cantidad> (R1.4); cualquier otro campo se ignora."""
-    lineas = []
-    for clave, valor in form.items():
-        if not clave.startswith("cantidad-"):
-            continue                              # un "precio" o "total" inventado se ignora
-        valor = valor.strip()
-        if valor in ("", "0"):
-            continue                              # plato no elegido
-        try:
-            lineas.append(LineaPedido(plato_id=int(clave.removeprefix("cantidad-")), cantidad=int(valor)))
-        except ValueError:
-            abort(400, description="La cantidad debe ser un número entero.")
-    return tuple(lineas)
+def leer_lineas(datos):
+    """Solo plato_id y cantidad de cada línea (R1.4); un "precio", "total" o "cliente" se ignora."""
+    lineas = datos.get("lineas") or []
+    if not isinstance(lineas, list):
+        raise ValueError("lineas debe ser una lista.")
+    resultado = []
+    for linea in lineas:
+        if not isinstance(linea, dict):
+            raise ValueError("Cada línea debe tener plato_id y cantidad.")
+        resultado.append(LineaPedido(
+            plato_id=entero(linea.get("plato_id"), "plato_id debe ser un número entero."),
+            cantidad=entero(linea.get("cantidad"), "La cantidad debe ser un número entero."),
+        ))
+    return tuple(resultado)
 
 
 # ------------------------------------------------------------------ cliente
@@ -40,59 +40,47 @@ def leer_lineas(form):
 @bp.route("/restaurantes/<int:restaurante_id>/pedidos", methods=["POST"])
 @requires_auth("create:pedidos")
 def crear_pedido(payload, restaurante_id):
-    details = PedidoDetails(restaurante_id=restaurante_id, lineas=leer_lineas(request.form))
-
     try:
-        pedido_id = servicio().crear(payload["sub"], details)                # R1.2: el cliente sale del token
-    except NoSeGuardoError:
-        flash("No se pudo crear el pedido.", "error")
-        return redirect(url_for("carta.detalle_restaurante", restaurante_id=restaurante_id))
+        details = PedidoDetails(restaurante_id=restaurante_id, lineas=leer_lineas(cuerpo_json()))
+    except ValueError as err:
+        return error_json("datos_invalidos", str(err), 400)
 
-    flash(f"Pedido #{pedido_id} creado.", "exito")
-    return redirect(url_for("pedidos.detalle_pedido", pedido_id=pedido_id))   # Post/Redirect/Get
+    s = servicio()
+    pedido_id = s.crear(payload["sub"], details)                    # R1.2: el cliente sale del token
+    return json_de(s.obtener_propio(pedido_id, payload["sub"]), 201)
 
 
 @bp.route("/pedidos", methods=["GET"])
 @requires_auth("read:mis-pedidos")
 def mis_pedidos(payload):
-    return render_template("pedidos/index.html", pedidos=servicio().mis_pedidos(payload["sub"]))
+    return json_de(servicio().mis_pedidos(payload["sub"]))
 
 
 @bp.route("/pedidos/<int:pedido_id>", methods=["GET"])
 @requires_auth("read:mis-pedidos")
 def detalle_pedido(payload, pedido_id):
-    return render_template("pedidos/detalle.html", pedido=servicio().obtener_propio(pedido_id, payload["sub"]))
+    return json_de(servicio().obtener_propio(pedido_id, payload["sub"]))
 
 
-@bp.route("/pedidos/<int:pedido_id>/cancelar", methods=["POST"])
+@bp.route("/pedidos/<int:pedido_id>", methods=["PATCH"])
 @requires_auth("read:mis-pedidos")
 def cancelar_pedido(payload, pedido_id):
-    try:
-        servicio().cancelar(pedido_id, payload["sub"])
-        flash(f"Pedido #{pedido_id} cancelado.", "exito")
-    except NoSeGuardoError:
-        flash("No se pudo cancelar el pedido.", "error")
-
-    return redirect(url_for("pedidos.detalle_pedido", pedido_id=pedido_id))
+    """El cliente solo puede pedir {"estado": "cancelado"}."""
+    if texto(cuerpo_json(), "estado") != "cancelado":
+        return error_json("datos_invalidos", 'Solo puedes cambiar tu pedido a "cancelado".', 400)
+    return json_de(servicio().cancelar(pedido_id, payload["sub"]))
 
 
 # ------------------------------------------------------------------ cocina
 
-@bp.route("/cocina", methods=["GET"])
+@bp.route("/cocina/pedidos", methods=["GET"])
 @requires_auth("read:pedidos")
 def cocina(payload):
-    return render_template("cocina/index.html", pedidos=servicio().cola_de_cocina())
+    return json_de(servicio().cola_de_cocina())
 
 
-@bp.route("/cocina/pedidos/<int:pedido_id>/estado", methods=["POST"])
+@bp.route("/cocina/pedidos/<int:pedido_id>", methods=["PATCH"])
 @requires_auth("update:pedidos")
 def cambiar_estado(payload, pedido_id):
-    nuevo = request.form.get("estado", "").strip()
-
-    try:
-        etiqueta = servicio().avanzar(pedido_id, nuevo)
-        flash(f"Pedido #{pedido_id}: {etiqueta}.", "exito")
-    except NoSeGuardoError:
-        flash("No se pudo cambiar el estado.", "error")
-
-    return redirect(url_for("pedidos.cocina"))
+    """{"estado": "<siguiente>"}: solo se acepta el siguiente paso de la tabla."""
+    return json_de(servicio().avanzar(pedido_id, texto(cuerpo_json(), "estado")))

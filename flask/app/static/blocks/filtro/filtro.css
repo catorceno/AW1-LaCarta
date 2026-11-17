@@ -1,0 +1,15 @@
+/* filtro: buscador del listado (campo + Filtrar + Quitar filtro) */
+.filtro {
+  display: flex;
+  gap: 8px;
+}
+
+.filtro__entrada {
+  max-width: 320px;
+}
+
+@media (max-width: 760px) {
+  .filtro__entrada {
+    max-width: none;
+  }
+}

@@ -1,0 +1,11 @@
+/* avisos: la columna de mensajes (bloque aviso) arriba del contenido.
+   --vacio la oculta cuando no hay ninguno, para que no deje un hueco. */
+.avisos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.avisos--vacio {
+  display: none;
+}

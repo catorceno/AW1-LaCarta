@@ -1,0 +1,35 @@
+/* migas: la ruta de la página actual (Restaurantes / La Cumbre / Editar) */
+.migas {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--texto-suave);
+}
+
+.migas__enlace,
+.migas__actual {
+  overflow: hidden;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.migas__enlace {
+  transition: background var(--transicion);
+}
+
+.migas__enlace:hover {
+  background: var(--hover);
+  color: var(--texto);
+}
+
+.migas__actual {
+  color: var(--texto);
+}
+
+.migas__sep {
+  color: var(--texto-tenue);
+}

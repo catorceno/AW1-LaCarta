@@ -1,0 +1,48 @@
+/* boton: sirve igual para <button> y <a>. Variantes con modificadores. */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: transparent;
+  color: var(--texto);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--transicion), border-color var(--transicion);
+}
+
+.boton:hover {
+  background: var(--hover);
+}
+
+.boton--primario {
+  border-color: var(--azul);
+  background: var(--azul);
+  color: #fff;
+}
+
+.boton--primario:hover {
+  border-color: var(--azul-hover);
+  background: var(--azul-hover);
+}
+
+.boton--peligro {
+  border-color: rgba(235, 87, 87, 0.4);
+  color: var(--rojo);
+}
+
+.boton--peligro:hover {
+  background: rgba(235, 87, 87, 0.1);
+}
+
+.boton--fantasma {
+  border-color: transparent;
+  color: var(--texto-suave);
+}

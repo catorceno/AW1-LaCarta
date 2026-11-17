@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurante · La Carta</title>
+  <link rel="stylesheet" href="/static/main.css">
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.19/auth0-spa-js.production.js"></script>
+  <script type="module" src="/static/paginas/restaurante.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="app__lateral barra-lateral">
+      <a class="barra-lateral__marca" href="/restaurantes">
+        <span class="barra-lateral__marca-icono" aria-hidden="true">L</span>
+        <span class="barra-lateral__marca-nombre">La Carta</span>
+      </a>
+      <nav class="nav" aria-label="Navegación principal" data-nav></nav>
+    </aside>
+
+    <div class="app__principal">
+      <header class="barra-superior">
+        <nav class="migas" aria-label="Ruta actual" data-migas></nav>
+        <div class="barra-superior__usuario usuario" data-usuario></div>
+      </header>
+
+      <main class="pagina">
+        <div class="pagina__avisos avisos avisos--vacio" data-avisos></div>
+
+        <div data-contenido>
+          <header class="pagina__cabecera">
+            <h1 class="pagina__titulo" data-campo="nombre">Cargando…</h1>
+            <div class="acciones">
+              <a class="boton" data-enlace="editar" data-requiere="write:carta" hidden>Editar</a>
+              <button class="boton boton--peligro" type="button" data-accion="eliminar"
+                      data-confirmar="¿Eliminar este restaurante y todos sus platos?" data-requiere="delete:carta" hidden>Eliminar</button>
+            </div>
+          </header>
+
+          <dl class="propiedades">
+            <div class="propiedades__fila">
+              <dt class="propiedades__nombre">Ciudad</dt>
+              <dd class="propiedades__valor"><span class="etiqueta" data-campo="ciudad"></span></dd>
+            </div>
+            <div class="propiedades__fila">
+              <dt class="propiedades__nombre">Dirección</dt>
+              <dd class="propiedades__valor" data-campo="direccion"></dd>
+            </div>
+            <div class="propiedades__fila">
+              <dt class="propiedades__nombre">Teléfono</dt>
+              <dd class="propiedades__valor" data-campo="telefono"></dd>
+            </div>
+          </dl>
+
+          <section class="pagina__seccion seccion">
+            <h2 class="seccion__titulo">Platos <span class="contador" data-campo="cantidad-platos"></span></h2>
+            <ul class="lista" data-lista="platos"></ul>
+
+            <form class="seccion__pie formulario-linea" data-formulario="plato" data-requiere="write:carta" hidden>
+              <input class="formulario-linea__principal entrada" name="nombre" type="text" placeholder="Nombre del plato" aria-label="Nombre del plato" required>
+              <input class="formulario-linea__secundario entrada" name="precio" type="number" step="0.01" min="0.01" placeholder="Precio (Bs.)" aria-label="Precio" required>
+              <label class="casilla">
+                <input class="casilla__control" name="disponible" type="checkbox" checked> Disponible
+              </label>
+              <button class="boton boton--primario" type="submit">Agregar plato</button>
+            </form>
+          </section>
+
+          <!-- Hacer un pedido: solo con create:pedidos. Se envían solo plato y cantidad;
+               el precio y el total los calcula el servidor. -->
+          <section class="pagina__seccion seccion" data-requiere="create:pedidos" hidden>
+            <h2 class="seccion__titulo">Hacer un pedido</h2>
+            <form data-formulario="pedido">
+              <ul class="lista" data-lista="pedido"></ul>
+              <div class="seccion__pie acciones" data-enviar-pedido>
+                <button class="boton boton--primario" type="submit">Hacer pedido</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <template data-plantilla="plato">
+    <li class="lista__item fila">
+      <span class="fila__titulo" data-campo="nombre"></span>
+      <span class="fila__etiqueta estado" data-estado></span>
+      <span class="fila__meta" data-campo="precio"></span>
+    </li>
+  </template>
+
+  <template data-plantilla="linea-pedido">
+    <li class="lista__item fila">
+      <label class="fila__titulo" data-campo="nombre"></label>
+      <span class="fila__meta" data-campo="precio"></span>
+      <input class="entrada" type="number" min="0" max="20" step="1" value="0" data-cantidad>
+    </li>
+  </template>
+
+</body>
+</html>

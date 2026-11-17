@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurantes · La Carta</title>
+  <link rel="stylesheet" href="/static/main.css">
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.19/auth0-spa-js.production.js"></script>
+  <script type="module" src="/static/paginas/restaurantes.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="app__lateral barra-lateral">
+      <a class="barra-lateral__marca" href="/restaurantes">
+        <span class="barra-lateral__marca-icono" aria-hidden="true">L</span>
+        <span class="barra-lateral__marca-nombre">La Carta</span>
+      </a>
+      <nav class="nav" aria-label="Navegación principal" data-nav></nav>
+    </aside>
+
+    <div class="app__principal">
+      <header class="barra-superior">
+        <nav class="migas" aria-label="Ruta actual" data-migas></nav>
+        <div class="barra-superior__usuario usuario" data-usuario></div>
+      </header>
+
+      <main class="pagina">
+        <div class="pagina__avisos avisos avisos--vacio" data-avisos></div>
+
+        <div data-contenido>
+          <header class="pagina__cabecera">
+            <div>
+              <h1 class="pagina__titulo">Restaurantes</h1>
+              <p class="pagina__subtitulo" data-campo="resumen">Cargando…</p>
+            </div>
+            <a class="boton boton--primario" href="/restaurantes/crear" data-requiere="write:carta" hidden>+ Nuevo restaurante</a>
+          </header>
+
+          <!-- GET: el navegador agrega ?ciudad=… a la URL; la página lo lee al cargar -->
+          <form class="pagina__filtro filtro" method="get" action="/restaurantes">
+            <input class="filtro__entrada entrada" type="search" name="ciudad" placeholder="Filtrar por ciudad…" aria-label="Filtrar por ciudad">
+            <button class="boton" type="submit">Filtrar</button>
+            <a class="boton boton--fantasma" href="/restaurantes" data-quitar-filtro hidden>Quitar filtro</a>
+          </form>
+
+          <ul class="lista" data-lista="restaurantes"></ul>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <template data-plantilla="restaurante">
+    <li class="lista__item">
+      <a class="fila" data-enlace>
+        <span class="fila__titulo" data-campo="nombre"></span>
+        <span class="fila__etiqueta etiqueta" data-campo="ciudad"></span>
+        <span class="fila__meta" data-campo="platos"></span>
+      </a>
+    </li>
+  </template>
+
+</body>
+</html>

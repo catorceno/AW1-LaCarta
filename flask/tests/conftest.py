@@ -8,7 +8,7 @@
   claves de la app recibe la mitad pública en el formato del JWKS de Auth0,
   y los tokens se firman con la mitad privada. verify_decode_jwt corre el
   mismo código que en producción.
-- sign_in() escribe el token en la sesión, igual que /auth/callback.
+- auth() arma el header Authorization: Bearer <token>, igual que el frontend.
 """
 import json
 from datetime import datetime, timedelta, timezone
@@ -35,9 +35,7 @@ SUB_BETO = "auth0|beto"
 
 
 class PruebasConfig(TestConfig):
-    # Por si el .env del contenedor trae los valores de producción:
-    # en las pruebas el cliente habla http://localhost, sin proxy.
-    SESSION_COOKIE_SECURE = False
+    # Por si el .env del contenedor trae los valores de producción
     BEHIND_PROXY = False
 
 
@@ -97,13 +95,11 @@ def make_token(app):
 
 
 @pytest.fixture
-def sign_in(client, make_token):
-    """Pone el token en la sesión, como lo hace /auth/callback después del login."""
-    def _sign_in(permissions, sub=SUB_ANA):
-        with client.session_transaction() as session:
-            session["access_token"] = make_token(permissions, sub)
-            session["user"] = {"name": sub, "email": f"{sub}@example.com"}
-    return _sign_in
+def auth(make_token):
+    """El header que manda el frontend después del login: {"Authorization": "Bearer <token>"}."""
+    def _auth(permissions, sub=SUB_ANA):
+        return {"Authorization": f"Bearer {make_token(permissions, sub)}"}
+    return _auth
 
 
 @pytest.fixture

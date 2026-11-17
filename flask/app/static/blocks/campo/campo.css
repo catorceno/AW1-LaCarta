@@ -1,0 +1,18 @@
+/* campo: etiqueta + control de un formulario. El control es el bloque entrada (mix campo__control). */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo__etiqueta {
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.campo__nota {
+  margin-left: 4px;
+  color: var(--texto-tenue);
+  font-weight: 400;
+}

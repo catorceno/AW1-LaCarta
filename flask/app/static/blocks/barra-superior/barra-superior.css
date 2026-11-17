@@ -1,0 +1,16 @@
+/* barra-superior: las migas a la izquierda y el usuario a la derecha */
+.barra-superior {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  height: 45px;
+  padding: 0 12px;
+  background: var(--fondo);
+}
+
+/* Mix con el bloque usuario: el padre lo pega a la derecha */
+.barra-superior__usuario {
+  margin-left: auto; /* ocupa el espacio libre a su izquierda */
+}
