@@ -19,9 +19,9 @@
     {% for p in pedidos %}
       <li class="fila fila-pedido">
         <div>
-          <span class="fila-titulo">#{{ p.id }} · {{ p.restaurante.nombre }}</span>
+          <span class="fila-titulo">#{{ p.id }} · {{ p.restaurante_nombre }}</span>
           <p class="texto-tenue">
-            {% for item in p.items %}{{ item.cantidad }} × {{ item.plato.nombre }}{% if not loop.last %}, {% endif %}{% endfor %}
+            {% for item in p.items %}{{ item.cantidad }} × {{ item.plato_nombre }}{% if not loop.last %}, {% endif %}{% endfor %}
           </p>
         </div>
         <span class="estado estado-{{ p.estado }}">{{ p.estado_etiqueta }}</span>
@@ -29,8 +29,8 @@
         {# Solo quien tiene update:pedidos ve el botón; la ruta lo exige igual #}
         {% if 'update:pedidos' in current_user.permissions %}
         <form method="post" action="{{ url_for('pedidos.cambiar_estado', pedido_id=p.id) }}">
-          <input type="hidden" name="estado" value="{{ siguiente[p.estado] }}">
-          <button class="boton boton-primario" type="submit">Pasar a {{ etiquetas[siguiente[p.estado]] }}</button>
+          <input type="hidden" name="estado" value="{{ p.siguiente_estado }}">
+          <button class="boton boton-primario" type="submit">Pasar a {{ p.siguiente_etiqueta }}</button>
         </form>
         {% endif %}
       </li>

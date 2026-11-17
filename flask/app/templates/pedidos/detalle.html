@@ -24,7 +24,7 @@
   <dl class="propiedades">
     <div>
       <dt>Restaurante</dt>
-      <dd><a href="{{ url_for('carta.detalle_restaurante', restaurante_id=pedido.restaurante.id) }}">{{ pedido.restaurante.nombre }}</a></dd>
+      <dd><a href="{{ url_for('carta.detalle_restaurante', restaurante_id=pedido.restaurante_id) }}">{{ pedido.restaurante_nombre }}</a></dd>
     </div>
     <div>
       <dt>Estado</dt>
@@ -41,7 +41,7 @@
     <ul class="lista">
       {% for item in pedido.items %}
         <li class="fila">
-          <span class="fila-titulo">{{ item.cantidad }} × {{ item.plato.nombre }}</span>
+          <span class="fila-titulo">{{ item.cantidad }} × {{ item.plato_nombre }}</span>
           <span class="texto-tenue">{{ "%.2f"|format(item.precio_unitario) }} Bs. c/u</span>
           <span class="fila-meta">{{ "%.2f"|format(item.precio_unitario * item.cantidad) }} Bs.</span>
         </li>

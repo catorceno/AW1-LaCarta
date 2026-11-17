@@ -19,7 +19,7 @@
     {% for p in pedidos %}
       <li>
         <a class="fila" href="{{ url_for('pedidos.detalle_pedido', pedido_id=p.id) }}">
-          <span class="fila-titulo">Pedido #{{ p.id }} · {{ p.restaurante.nombre }}</span>
+          <span class="fila-titulo">Pedido #{{ p.id }} · {{ p.restaurante_nombre }}</span>
           <span class="estado estado-{{ p.estado }}">{{ p.estado_etiqueta }}</span>
           <span class="fila-meta">{{ "%.2f"|format(p.total) }} Bs.</span>
         </a>

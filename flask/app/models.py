@@ -40,14 +40,8 @@ class Plato(db.Model):
         return f'<Plato id={self.id} nombre={self.nombre}>'
 
 
-ETIQUETAS_ESTADO = {
-    'pendiente': 'Pendiente',
-    'en_preparacion': 'En preparación',
-    'listo': 'Listo',
-    'entregado': 'Entregado',
-    'cancelado': 'Cancelado',
-}
-ESTADOS = tuple(ETIQUETAS_ESTADO)
+# Los valores que acepta la columna (las etiquetas para mostrarlos están en services/pedido_service.py)
+ESTADOS = ('pendiente', 'en_preparacion', 'listo', 'entregado', 'cancelado')
 _ESTADOS_SQL = ", ".join(f"'{e}'" for e in ESTADOS)   # 'pendiente', 'en_preparacion', ...
 
 
@@ -83,11 +77,6 @@ class Pedido(db.Model):
         cascade='all, delete-orphan',
         lazy=True
     )
-
-    @property
-    def estado_etiqueta(self):
-        """'en_preparacion' -> 'En preparación', para mostrarlo en las plantillas."""
-        return ETIQUETAS_ESTADO.get(self.estado, self.estado)
 
     def __repr__(self):
         return f'<Pedido id={self.id} cliente={self.cliente} estado={self.estado}>'

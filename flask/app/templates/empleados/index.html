@@ -24,7 +24,7 @@
       <li>
         <a class="fila" href="{{ url_for('empleados.detalle_empleado', empleado_id=e.id) }}">
           <span class="fila-titulo">{{ e.apellido }}, {{ e.nombre }}</span>
-          <span class="etiqueta">{{ e.restaurante.nombre }}</span>
+          <span class="etiqueta">{{ e.restaurante_nombre }}</span>
           <span class="estado {{ 'estado-si' if e.activo else 'estado-no' }}">{{ 'Activo' if e.activo else 'Inactivo' }}</span>
         </a>
       </li>

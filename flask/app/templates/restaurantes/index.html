@@ -27,12 +27,12 @@
   </form>
 
   <ul class="lista">
-    {% for r, cantidad in restaurantes %}
+    {% for r in restaurantes %}
       <li>
         <a class="fila" href="{{ url_for('carta.detalle_restaurante', restaurante_id=r.id) }}">
           <span class="fila-titulo">{{ r.nombre }}</span>
           <span class="etiqueta">{{ r.ciudad }}</span>
-          <span class="fila-meta">{{ cantidad }} {{ 'plato' if cantidad == 1 else 'platos' }}</span>
+          <span class="fila-meta">{{ r.cantidad_platos }} {{ 'plato' if r.cantidad_platos == 1 else 'platos' }}</span>
         </a>
       </li>
     {% else %}
